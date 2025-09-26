@@ -48,21 +48,23 @@
             50% { opacity: 1; }
         }
 
-        /* 时钟样式 - 已修改位置 */
+        /* 时钟样式 - 已修改位置到导航栏内 */
         .clock-container {
             position: fixed;
-            top: 80px; /* 从20px改为80px，避免遮挡导航栏 */
-            left: 20px;
+            top: 20px;
+            right: 20px;
             z-index: 200;
-            background: rgba(23, 23, 23, 0.7);
+            background: transparent;
             border-radius: 10px;
-            padding: 10px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(23, 247, 0, 0.3);
+            padding: 0;
+            backdrop-filter: none;
+            border: none;
         }
 
         #clockCanvas {
             display: block;
+            width: 50px;
+            height: 50px;
         }
 
         /* 加载动画样式 - 已修改确保覆盖全屏 */
@@ -120,19 +122,19 @@
 
         .cat-eye-left, .cat-eye-right {
             width: 20px;
-            height: 30px;
+            height: 20px; /* 修改高度为20px */
             background: #171717;
             border-radius: 50%;
             position: absolute;
-            top: 45px;
+            top: 50px; /* 调整眼睛位置 */
         }
 
         .cat-eye-left {
-            left: 25px;
+            left: 30px; /* 调整左眼位置 */
         }
 
         .cat-eye-right {
-            right: 25px;
+            right: 30px; /* 调整右眼位置 */
         }
 
         .cat-nose {
@@ -141,7 +143,7 @@
             background: #ff6b6b;
             border-radius: 50%;
             position: absolute;
-            top: 70px;
+            top: 75px; /* 调整鼻子位置 */
             left: 42.5px;
         }
 
@@ -410,7 +412,7 @@
             font-family: 'Exo 2', sans-serif;
         }
 
-        /* 卷轴区域样式 */
+        /* 卷轴区域样式 - 已修改 */
         .scroll-section {
             padding: 5rem 10vw;
             text-align: center;
@@ -438,6 +440,7 @@
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            perspective: 1000px;
         }
 
         .scroll-content {
@@ -446,11 +449,22 @@
             overflow-y: scroll;
             padding-right: 17px;
             box-sizing: content-box;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+        }
+
+        .scroll-content:hover {
+            transform: rotateX(10deg) rotateY(-5deg);
         }
 
         .scroll-content img {
             width: 100%;
             display: block;
+            transition: transform 0.3s;
+        }
+
+        .scroll-content:hover img {
+            transform: scale(1.05);
         }
 
         /* 关于我区域样式 */
@@ -535,7 +549,7 @@
             box-shadow: 0 0 10px rgba(23, 247, 0, 0.5);
         }
 
-        /* 联系区域样式 */
+        /* 联系区域样式 - 已修改 */
         .contact {
             padding: 5rem 10vw;
             text-align: center;
@@ -555,13 +569,17 @@
             letter-spacing: 2px;
             overflow: hidden;
             white-space: nowrap;
-            border-right: 3px solid #17f700;
-            animation: typing 3s steps(30, end), blink-caret 0.5s step-end infinite;
+            width: 0;
+            opacity: 0;
+        }
+
+        .contact h2.animate {
+            animation: typing 2s steps(6, end) forwards, blink-caret 0.5s step-end infinite;
         }
 
         @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
+            from { width: 0; opacity: 1; }
+            to { width: 100%; opacity: 1; }
         }
 
         @keyframes blink-caret {
@@ -668,14 +686,13 @@
             }
             
             .clock-container {
-                top: 70px; /* 移动端也调整时钟位置 */
-                left: 10px;
-                padding: 5px;
+                top: 15px;
+                right: 10px;
             }
             
             #clockCanvas {
-                width: 80px;
-                height: 80px;
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
@@ -685,7 +702,7 @@
     <!-- 闪烁背景 -->
     <div class="twinkling-bg" id="twinklingBg"></div>
     
-    <!-- 时钟 - 位置已调整 -->
+    <!-- 时钟 - 位置已调整到导航栏内 -->
     <div class="clock-container">
         <canvas id="clockCanvas" width="100" height="100"></canvas>
     </div>
@@ -788,7 +805,7 @@
             <h2>作品展示</h2>
             <div class="scroll-container">
                 <div class="scroll-content" id="scrollContent">
-                    <img src="2f85346de92c812421efb27b252414fe_750.png" alt="">
+                    <img src="65e55cf464ff645f20df4158ef3f0d9f.jpg" alt="">
                     <img src="7c87aea581f4a821f107905be8fe7312_750.png" alt="">
                     <img src="25089ec245f728539848e0b2e2541462_750.png" alt="">
                     <img src="IMG_4227.JPG" alt="">
@@ -858,7 +875,7 @@
 
         <!-- 联系区域 -->
         <section class="contact" id="contact">
-            <h2>联系我</h2>
+            <h2 id="contactTitle">联系我</h2>
             <p>如果您对我的作品感兴趣，或者有项目合作的想法，请随时与我联系。我期待与您合作，共同创造出色的数字体验。</p>
             <div class="social-links">
                 <a href="mailto:2948816896@email.com">发送邮件</a>
@@ -909,7 +926,7 @@
                 // 绘制外圆
                 ctx.beginPath();
                 ctx.arc(radius, radius, radius * 0.9, 0, 2 * Math.PI);
-                ctx.fillStyle = '#171717';
+                ctx.fillStyle = 'transparent';
                 ctx.fill();
                 ctx.strokeStyle = '#17f700';
                 ctx.lineWidth = radius * 0.05;
@@ -1086,38 +1103,37 @@
                         point.setAttribute("cy", y);
                         point.setAttribute("r", radius / 5);
                         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("stroke", "#17f700");
+                        line.setAttribute("stroke-width", 1);
                         line.setAttribute("x1", x);
                         line.setAttribute("y1", y);
                         line.setAttribute("x2", x);
                         line.setAttribute("y2", y);
-                        line.setAttribute("stroke", "#f7f7f7");
-                        line.setAttribute("stroke-width", 1);
                         this.container.appendChild(line);
                         this.container.appendChild(ball);
                         this.container.appendChild(point);
                         this.balls.push({
-                            x,
-                            y,
-                            ball,
-                            point,
-                            line,
+                            x, y,
+                            ball, point, line,
                             origin_x: x,
                             origin_y: y
                         });
                     }
                 }
             },
-            move_balls(x, y) {
+            move_balls(mouse_x, mouse_y) {
                 this.balls.forEach((ball) => {
-                    const distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2));
+                    const distance = Math.sqrt(Math.pow(mouse_x - ball.x, 2) + Math.pow(mouse_y - ball.y, 2));
                     if (distance < this.mouse_radius) {
+                        const angle = Math.atan2(mouse_y - ball.y, mouse_x - ball.x);
                         const force = (this.mouse_radius - distance) / this.mouse_radius;
-                        const angle = Math.atan2(y - ball.y, x - ball.x);
-                        ball.x = ball.origin_x - Math.cos(angle) * force * 30;
-                        ball.y = ball.origin_y - Math.sin(angle) * force * 30;
+                        const move_x = Math.cos(angle) * force * 20;
+                        const move_y = Math.sin(angle) * force * 20;
+                        ball.x = ball.origin_x - move_x;
+                        ball.y = ball.origin_y - move_y;
                     } else {
-                        ball.x += (ball.origin_x - ball.x) / 10;
-                        ball.y += (ball.origin_y - ball.y) / 10;
+                        ball.x += (ball.origin_x - ball.x) * 0.1;
+                        ball.y += (ball.origin_y - ball.y) * 0.1;
                     }
                     ball.ball.setAttribute("cx", ball.x);
                     ball.ball.setAttribute("cy", ball.y);
@@ -1131,9 +1147,93 @@
             }
         };
 
-        // 滚动动画
-        function initScrollAnimations() {
-            // 初始化Lenis平滑滚动
+        // 水平滚动效果
+        function initHorizontalScroll() {
+            const container = document.querySelector('.container');
+            const cardsbox = document.querySelector('.cardsbox');
+            
+            // 计算总宽度
+            const cards = document.querySelectorAll('.flip-card');
+            const cardWidth = cards[0].offsetWidth + parseInt(getComputedStyle(cards[0]).marginRight);
+            const totalWidth = cardWidth * cards.length;
+            cardsbox.style.width = `${totalWidth}px`;
+            
+            // 监听滚动
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const startScroll = container.offsetTop;
+                const endScroll = startScroll + container.offsetHeight;
+                
+                if (scrollY >= startScroll && scrollY <= endScroll) {
+                    const progress = (scrollY - startScroll) / container.offsetHeight;
+                    const translateX = -progress * (totalWidth - window.innerWidth);
+                    cardsbox.style.transform = `translateX(${translateX}px)`;
+                }
+            });
+        }
+
+        // 卷轴效果 - 已修改
+        function initScrollEffect() {
+            const scrollContent = document.getElementById('scrollContent');
+            const images = scrollContent.querySelectorAll('img');
+            
+            // 设置图片高度
+            images.forEach(img => {
+                img.style.height = 'auto';
+            });
+            
+            // 添加鼠标滚动效果
+            scrollContent.addEventListener('scroll', () => {
+                const scrollTop = scrollContent.scrollTop;
+                const scrollHeight = scrollContent.scrollHeight - scrollContent.clientHeight;
+                const scrollPercent = scrollTop / scrollHeight;
+                
+                // 根据滚动位置调整卷曲效果
+                const rotationX = 10 - scrollPercent * 20;
+                const rotationY = -5 + scrollPercent * 10;
+                
+                scrollContent.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+            });
+        }
+
+        // 技能条动画
+        function initSkillsAnimation() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.getAttribute('data-width');
+                        entry.target.style.width = `${width}%`;
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            skillBars.forEach(bar => {
+                observer.observe(bar);
+            });
+        }
+
+        // 联系我标题动画 - 已修改
+        function initContactAnimation() {
+            const contactTitle = document.getElementById('contactTitle');
+            const contactSection = document.getElementById('contact');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        contactTitle.classList.add('animate');
+                        observer.unobserve(contactSection);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(contactSection);
+        }
+
+        // 平滑滚动
+        function initSmoothScroll() {
             const lenis = new Lenis({
                 duration: 1.2,
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -1152,98 +1252,38 @@
             }
 
             requestAnimationFrame(raf);
-
-            // 初始化GSAP滚动触发器
-            gsap.registerPlugin(ScrollTrigger);
-
-            // 水平滚动卡片效果
-            const cardsbox = document.querySelector('.cardsbox');
-            const cards = document.querySelectorAll('.flip-card');
-            const container = document.querySelector('.container');
-
-            gsap.to(cardsbox, {
-                x: () => -(cardsbox.scrollWidth - container.offsetWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".wapper",
-                    start: "top top",
-                    end: () => `+=${cardsbox.scrollWidth - container.offsetWidth}`,
-                    pin: true,
-                    scrub: 1,
-                    invalidateOnRefresh: true,
-                    anticipatePin: 1
-                }
-            });
-
-            // 卡片翻转动画
-            cards.forEach((card, index) => {
-                gsap.fromTo(card, {
-                    opacity: 0,
-                    y: 100
-                }, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 80%",
-                        end: "bottom 20%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
-            });
-
-            // 技能条动画
-            const skillBars = document.querySelectorAll('.skill-progress');
-            skillBars.forEach(bar => {
-                gsap.to(bar, {
-                    width: bar.getAttribute('data-width') + '%',
-                    scrollTrigger: {
-                        trigger: bar,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse"
-                    },
-                    duration: 1.5,
-                    ease: "power2.out"
-                });
-            });
-
-            // 其他元素动画
-            gsap.utils.toArray('.hero h1, .hero p, .cta-button').forEach(el => {
-                gsap.fromTo(el, {
-                    opacity: 0,
-                    y: 50
-                }, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: el,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
-            });
         }
 
         // 页面加载完成后初始化
-        window.addEventListener('load', function() {
+        window.addEventListener('DOMContentLoaded', () => {
             // 创建闪烁背景
             createTwinklingBackground();
             
-            // 绘制时钟
+            // 初始化时钟
             drawClock();
             
-            // 创建蜂窝加载动画
+            // 创建六边形动画
             createHexagonAnimation();
             
-            // 初始化磁吸效果
+            // 初始化磁吸小球
             magnetic.init();
             
-            // 初始化滚动动画
-            initScrollAnimations();
+            // 初始化水平滚动
+            initHorizontalScroll();
             
-            // 隐藏加载动画
+            // 初始化卷轴效果
+            initScrollEffect();
+            
+            // 初始化技能条动画
+            initSkillsAnimation();
+            
+            // 初始化联系我动画
+            initContactAnimation();
+            
+            // 初始化平滑滚动
+            initSmoothScroll();
+            
+            // 页面加载完成后隐藏加载动画
             setTimeout(() => {
                 loading.out();
             }, 3000);
