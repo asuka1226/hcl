@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>welcome to my personal website</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            background-color: #171717;
+            color: #f7f7f7;
+            font-family: 'Exo 2', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 闪烁背景效果 */
+        .twinkling-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .twinkle {
+            position: absolute;
+            background-color: #17f700;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* 时钟样式 - 已修改位置到导航栏内上方正中间 */
+        .clock-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            background: transparent;
+            border-radius: 10px;
+            padding: 0;
+            backdrop-filter: none;
+            border: none;
+        }
+
+        #clockCanvas {
+            display: block;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* 加载动画样式 - 已修改确保覆盖全屏 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #171717;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1s ease;
+        }
+
+        .cat-animation {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .cat-head {
+            width: 100px;
+            height: 100px;
+            background: #f7f7f7;
+            border-radius: 50%;
+            position: absolute;
+            top: 25px;
+            left: 25px;
+        }
+
+        .cat-ear-left, .cat-ear-right {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 40px solid #f7f7f7;
+            position: absolute;
+            top: 0;
+        }
+
+        .cat-ear-left {
+            left: 15px;
+            transform: rotate(-20deg);
+        }
+
+        .cat-ear-right {
+            right: 15px;
+            transform: rotate(20deg);
+        }
+
+        .cat-eye-left, .cat-eye-right {
+            width: 20px;
+            height: 25px; /* 修改高度为25px */
+            background: #0e67cd;
+            border-radius: 50%;
+            position: absolute;
+            top: 58px; /* 调整眼睛位置 */
+        }
+
+        .cat-eye-left {
+            left: 35px; /* 调整左眼位置 */
+        }
+
+        .cat-eye-right {
+            right: 35px; /* 调整右眼位置 */
+        }
+
+        .cat-nose {
+            width: 15px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            top: 85px; /* 调整鼻子位置 */
+            left: 65px;
+        }
+
+        .hexagon-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hexagon {
+            position: absolute;
+            width: 40px;
+            height: 23.09px;
+            background-color: #17f700;
+            margin: 11.55px 0;
+            opacity: 0.3;
+        }
+
+        .hexagon:before,
+        .hexagon:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+        }
+
+        .hexagon:before {
+            bottom: 100%;
+            border-bottom: 11.55px solid #17f700;
+        }
+
+        .hexagon:after {
+            top: 100%;
+            width: 0;
+            border-top: 11.55px solid #17f700;
+        }
+
+        .loading-screen p {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #f7f7f7;
+            font-weight: 900;
+            transition: 0.3s ease;
+            letter-spacing: 3px;
+        }
+
+        .loading_out {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        /* 磁吸小球容器 */
+        .magnetic-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.3;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: rgba(23, 23, 23, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #17f700;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #f7f7f7;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover {
+            color: #17f700;
+        }
+
+        /* 英雄区域样式 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #17f700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(23, 247, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #17f700;
+            color: #171717;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            cursor: pointer;
+            pointer-events: all;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(23, 247, 0, 0.5);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            background-color: #13d400;
+            box-shadow: 0 5px 20px rgba(23, 247, 0, 0.7);
+        }
+
+        /* 水平滚动区域样式 */
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin: 5rem 0 3rem;
+            color: #17f700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(23, 247, 0, 0.5);
+        }
+
+        .wapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10rem;
+        }
+
+        .container {
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #171717;
+            overflow: hidden;
+        }
+
+        .cardsbox {
+            display: flex;
+            padding: 0 10vw;
+        }
+
+        .flip-card {
+            width: 70vmin;
+            height: 50vmin;
+            perspective: 1000px;
+            margin-right: 10vmin;
+            flex-shrink: 0;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .flip-card-front {
+            background-color: #f7f7f7;
+            color: #171717;
+            overflow: hidden;
+        }
+
+        .flip-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flip-card-back {
+            background-color: #f7f7f7;
+            color: #171717;
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-back h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .flip-card-back p {
+            font-size: 1.2rem;
+            text-align: center;
+            line-height: 1.5;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        /* 卷轴区域样式 - 已修改 */
+        .scroll-section {
+            padding: 5rem 10vw;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scroll-section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: #17f700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .scroll-container {
+            width: 80%;
+            max-width: 800px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            perspective: 1000px;
+        }
+
+        .scroll-content {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            padding-right: 17px;
+            box-sizing: content-box;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+        }
+
+        .scroll-content:hover {
+            transform: rotateX(10deg) rotateY(-5deg);
+        }
+
+        .scroll-content img {
+            width: 100%;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .scroll-content:hover img {
+            transform: scale(1.05);
+        }
+
+        /* 关于我区域样式 */
+        .about {
+            padding: 5rem 10vw;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5rem;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            height: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-content {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .about-content h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #17f700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        /* 技能条样式 */
+        .skills-container {
+            margin-top: 2rem;
+        }
+
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background-color: #17f700;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s ease-in-out;
+            box-shadow: 0 0 10px rgba(23, 247, 0, 0.5);
+        }
+
+        /* 联系区域样式 - 已修改 */
+        .contact {
+            padding: 5rem 10vw;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #17f700;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            opacity: 0;
+            border-right: 3px solid #17f700;
+        }
+
+        .contact h2.animate {
+            animation: typing 1.5s steps(3, end) forwards, blink-caret 0.5s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; opacity: 1; }
+            to { width: 100%; opacity: 1; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #17f700 }
+        }
+
+        .contact p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #17f700;
+            color: #171717;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(23, 247, 0, 0.5);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            background-color: #13d400;
+            box-shadow: 0 5px 20px rgba(23, 247, 0, 0.7);
+        }
+
+        /* 页脚样式 */
+        footer {
+            padding: 3rem 10vw;
+            text-align: center;
+            background-color: #0f0f0f;
+            margin-top: 5rem;
+        }
+
+        footer p {
+            font-size: 1rem;
+            color: #888;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .flip-card {
+                width: 80vw;
+                height: 60vw;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-links a {
+                font-size: 1rem;
+            }
+            
+            .about {
+                flex-direction: column;
+            }
+            
+            .about-image, .about-content {
+                max-width: 100%;
+            }
+            
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .clock-container {
+                top: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            #clockCanvas {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 闪烁背景 -->
+    <div class="twinkling-bg" id="twinklingBg"></div>
+    
+    <!-- 时钟 - 位置已调整到上方正中间 -->
+    <div class="clock-container">
+        <canvas id="clockCanvas" width="100" height="100"></canvas>
+    </div>
+
+    <!-- 加载动画 - 确保覆盖全屏 -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="cat-animation">
+            <div class="cat-ear-left"></div>
+            <div class="cat-ear-right"></div>
+            <div class="cat-head"></div>
+            <div class="cat-eye-left"></div>
+            <div class="cat-eye-right"></div>
+            <div class="cat-nose"></div>
+        </div>
+        <div class="hexagon-container" id="hexagonContainer"></div>
+        <p>LOADING</p>
+    </div>
+
+    <!-- 磁吸小球效果 -->
+    <svg class="magnetic-container" id="magneticContainer"></svg>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo" id="pageLogo">PORTFOLIO</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#projects">作品</a>
+            <a href="#scroll">卷轴</a>
+            <a href="#about">关于</a>
+            <a href="#contact">联系</a>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main>
+        <!-- 英雄区域 -->
+        <section class="hero" id="home">
+            <h1>Hello my name is Linchangheng</h1>
+            <p>专注于创造独特、引人入胜的数字体验，融合前沿技术与艺术设计。</p>
+            <a href="#projects" class="cta-button">learn more</a>
+        </section>
+
+        <!-- 水平滚动区域 -->
+        <h2 class="section-title" id="projects">介绍</h2>
+        <div class="wapper">
+            <div class="container">
+                <div class="cardsbox">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="2f85346de92c812421efb27b252414fe_750.png" alt="">
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>对未来的学业规划</h3>
+                                <p>我计划在未来的学业中，深入研究前端开发和用户体验设计，力求在这两个领域达到更高的水平。目前主要还是努力学习高数和c语言。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="7c87aea581f4a821f107905be8fe7312_750.png" alt="">
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>优缺点</h3>
+                                <p>优点：乐于学习新知识，具备良好的逻辑思维能力；缺点：拥有超级无敌拖延症。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="25089ec245f728539848e0b2e2541462_750.png" alt="">
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>个人兴趣</h3>
+                                <p>编程方面：目前对前端开发和用户体验设计非常感兴趣，喜欢尝试各种新技术和工具。
+                                    除了编程之外：弹吉他，玩游戏....
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="IMG_4227.JPG" alt="">
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>周末时间安排</h3>
+                                <p>先睡个好睡，然后学高数和C语言，提高自我代码编写能力。累了就玩游戏☺️</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卷轴区域 -->
+        <section class="scroll-section" id="scroll">
+            <h2>作品展示</h2>
+            <div class="scroll-container">
+                <div class="scroll-content" id="scrollContent">
+                    <img src="65e55cf464ff645f20df4158ef3f0d9f.jpg" alt="">
+                    <img src="7c87aea581f4a821f107905be8fe7312_750.png" alt="">
+                    <img src="25089ec245f728539848e0b2e2541462_750.png" alt="">
+                    <img src="IMG_4227.JPG" alt="">
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于我区域 -->
+        <section class="about" id="about">
+            <div class="about-image">
+                <img src="7c87aea581f4a821f107905be8fe7312_750.png" alt="关于我">
+            </div>
+            <div class="about-content">
+                <h2>关于我</h2>
+                <p>我是一名充满热情的前端开发者和创意设计师，拥有0行业经验。我专注于创造独特的数字体验，将前沿技术与艺术设计完美融合。</p>
+                <p>我的技能包括HTML5、CSS3、JavaScript、React、Vue.js、GSAP动画库等（全都只懂0.1%）。我热衷于探索新的技术和设计趋势，并将其应用于实际项目中。</p>
+                
+                <div class="skills-container">
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>HTML5/CSS3</span>
+                            <span>0.5%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="9.5"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>JavaScript</span>
+                            <span>0.9%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="9.0"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>React</span>
+                            <span>0.85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="8.5"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Vue.js</span>
+                            <span>0.8%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="8.0"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>UI/UX设计</span>
+                            <span>0.75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="7.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系区域 -->
+        <section class="contact" id="contact">
+            <h2 id="contactTitle">联系我</h2>
+            <p>如果您对我的作品感兴趣，或者有项目合作的想法，请随时与我联系。我期待与您合作，共同创造出色的数字体验。</p>
+            <div class="social-links">
+                <a href="mailto:2948816896@qq.com">发送邮件</a>
+                <a href="https://github.com/asuka1226/asuka" target="_blank">GitHub</a>
+                <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 asuka 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 闪烁背景效果
+        function createTwinklingBackground() {
+            const container = document.getElementById('twinklingBg');
+            const starCount = 50;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('twinkle');
+                
+                // 随机位置和大小
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画延迟
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                
+                container.appendChild(star);
+            }
+        }
+
+        // 时钟功能
+        function drawClock() {
+            const canvas = document.getElementById('clockCanvas');
+            const ctx = canvas.getContext('2d');
+            const radius = canvas.height / 2;
+            
+            function drawClockFace() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制外圆
+                ctx.beginPath();
+                ctx.arc(radius, radius, radius * 0.9, 0, 2 * Math.PI);
+                ctx.fillStyle = 'transparent';
+                ctx.fill();
+                ctx.strokeStyle = '#17f700';
+                ctx.lineWidth = radius * 0.05;
+                ctx.stroke();
+                
+                // 绘制中心点
+                ctx.beginPath();
+                ctx.arc(radius, radius, radius * 0.05, 0, 2 * Math.PI);
+                ctx.fillStyle = '#17f700';
+                ctx.fill();
+            }
+            
+            function drawNumbers() {
+                ctx.font = radius * 0.15 + "px Orbitron";
+                ctx.textBaseline = "middle";
+                ctx.textAlign = "center";
+                ctx.fillStyle = '#17f700';
+                
+                for (let i = 1; i <= 12; i++) {
+                    const ang = i * Math.PI / 6;
+                    ctx.rotate(ang);
+                    ctx.translate(0, -radius * 0.75);
+                    ctx.rotate(-ang);
+                    ctx.fillText(i.toString(), 0, 0);
+                    ctx.rotate(ang);
+                    ctx.translate(0, radius * 0.75);
+                    ctx.rotate(-ang);
+                }
+            }
+            
+            function drawTime() {
+                const now = new Date();
+                let hour = now.getHours();
+                let minute = now.getMinutes();
+                let second = now.getSeconds();
+                
+                // 时针
+                hour = hour % 12;
+                hour = (hour * Math.PI / 6) + (minute * Math.PI / (6 * 60)) + (second * Math.PI / (360 * 60));
+                drawHand(ctx, hour, radius * 0.5, radius * 0.05);
+                
+                // 分针
+                minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
+                drawHand(ctx, minute, radius * 0.7, radius * 0.05);
+                
+                // 秒针
+                second = (second * Math.PI / 30);
+                drawHand(ctx, second, radius * 0.8, radius * 0.02);
+            }
+            
+            function drawHand(ctx, pos, length, width) {
+                ctx.beginPath();
+                ctx.lineWidth = width;
+                ctx.lineCap = "round";
+                ctx.moveTo(radius, radius);
+                ctx.lineTo(radius + length * Math.sin(pos), radius - length * Math.cos(pos));
+                ctx.strokeStyle = '#17f700';
+                ctx.stroke();
+            }
+            
+            function updateClock() {
+                drawClockFace();
+                drawNumbers();
+                drawTime();
+            }
+            
+            // 初始绘制并设置定时器
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // 蜂窝六边形加载动画 - 已修改确保覆盖整个界面
+        function createHexagonAnimation() {
+            const container = document.getElementById('hexagonContainer');
+            const rows = Math.ceil(window.innerHeight / 52) + 1; // 动态计算行数
+            const cols = Math.ceil(window.innerWidth / 60) + 1; // 动态计算列数
+            
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const hexagon = document.createElement('div');
+                    hexagon.classList.add('hexagon');
+                    
+                    // 计算位置
+                    const x = j * 60 + (i % 2 ? 30 : 0);
+                    const y = i * 52;
+                    
+                    hexagon.style.left = `${x}px`;
+                    hexagon.style.top = `${y}px`;
+                    
+                    // 随机动画延迟
+                    hexagon.style.animationDelay = `${Math.random() * 2}s`;
+                    hexagon.style.animation = `pulse 2s infinite ${Math.random() * 2}s`;
+                    
+                    container.appendChild(hexagon);
+                }
+            }
+            
+            // 添加脉冲动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { opacity: 0.1; transform: scale(0.8); }
+                    50% { opacity: 0.5; transform: scale(1.2); }
+                    100% { opacity: 0.1; transform: scale(0.8); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 加载动画
+        const loading = {
+            container: document.querySelector(".loading-screen"),
+            out() {
+                this.container.classList.add("loading_out");
+                setTimeout(() => {
+                    this.container.style.display = "none";
+                }, 1000);
+            }
+        };
+
+        // 磁吸小球效果
+        const magnetic = {
+            container: document.getElementById("magneticContainer"),
+            width: 0,
+            height: 0,
+            left: 0,
+            top: 0,
+            lines: 8,
+            rows: 8,
+            balls: [],
+            mouse_radius: 180,
+            init() {
+                this.resize();
+                this.create_yoyo(20);
+                document.addEventListener("mousemove", (e) => {
+                    this.move_balls(e.x, e.y);
+                });
+                window.addEventListener("resize", this.resize.bind(this));
+            },
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.left = 0;
+                this.top = 0;
+                
+                // 更新SVG尺寸
+                this.container.setAttribute("width", this.width);
+                this.container.setAttribute("height", this.height);
+                this.container.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+                
+                // 重新创建小球
+                this.clearBalls();
+                this.create_yoyo(20);
+            },
+            clearBalls() {
+                while (this.container.firstChild) {
+                    this.container.removeChild(this.container.firstChild);
+                }
+                this.balls = [];
+            },
+            create_yoyo(radius) {
+                for (let r = 0; r <= this.rows; r++) {
+                    for (let l = 0; l <= this.lines; l++) {
+                        let x = this.width / this.lines * l;
+                        let y = this.height / this.rows * r;
+                        const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        ball.setAttribute("fill", "#17f700");
+                        ball.setAttribute("cx", x);
+                        ball.setAttribute("cy", y);
+                        ball.setAttribute("r", radius);
+                        const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        point.setAttribute("fill", "#f7f7f7");
+                        point.setAttribute("cx", x);
+                        point.setAttribute("cy", y);
+                        point.setAttribute("r", radius * 0.5);
+                        this.container.appendChild(ball);
+                        this.container.appendChild(point);
+                        this.balls.push({
+                            x,
+                            y,
+                            ball,
+                            point,
+                            radius
+                        });
+                    }
+                }
+            },
+            move_balls(x, y) {
+                this.balls.forEach((ball) => {
+                    const distance = Math.sqrt(Math.pow(ball.x - x, 2) + Math.pow(ball.y - y, 2));
+                    if (distance < this.mouse_radius) {
+                        const angle = Math.atan2(ball.y - y, ball.x - x);
+                        const force = (this.mouse_radius - distance) / this.mouse_radius;
+                        const newX = ball.x + Math.cos(angle) * force * 20;
+                        const newY = ball.y + Math.sin(angle) * force * 20;
+                        ball.ball.setAttribute("cx", newX);
+                        ball.ball.setAttribute("cy", newY);
+                        ball.point.setAttribute("cx", newX);
+                        ball.point.setAttribute("cy", newY);
+                    } else {
+                        ball.ball.setAttribute("cx", ball.x);
+                        ball.ball.setAttribute("cy", ball.y);
+                        ball.point.setAttribute("cx", ball.x);
+                        ball.point.setAttribute("cy", ball.y);
+                    }
+                });
+            }
+        };
+
+        // 滚动动画
+        function initScrollAnimations() {
+            // 使用GSAP和ScrollTrigger
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // 初始化Lenis平滑滚动
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                touchMultiplier: 2,
+                infinite: false,
+            });
+            
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            
+            requestAnimationFrame(raf);
+            
+            // 水平滚动卡片
+            const cardsbox = document.querySelector('.cardsbox');
+            const cards = document.querySelectorAll('.flip-card');
+            
+            gsap.to(cardsbox, {
+                x: () => -(cardsbox.scrollWidth - window.innerWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".wapper",
+                    start: "top top",
+                    end: () => `+=${cardsbox.scrollWidth - window.innerWidth}`,
+                    pin: true,
+                    scrub: 1,
+                    invalidateOnRefresh: true
+                }
+            });
+            
+            // 卡片翻转动画
+            cards.forEach((card, index) => {
+                gsap.fromTo(card, {
+                    rotationY: 180,
+                    opacity: 0
+                }, {
+                    rotationY: 0,
+                    opacity: 1,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+            
+            // 卷轴区域3D效果
+            const scrollContent = document.getElementById('scrollContent');
+            
+            ScrollTrigger.create({
+                trigger: ".scroll-section",
+                start: "top center",
+                end: "bottom center",
+                onEnter: () => {
+                    gsap.to(scrollContent, {
+                        rotationX: 10,
+                        rotationY: -5,
+                        duration: 1
+                    });
+                },
+                onLeaveBack: () => {
+                    gsap.to(scrollContent, {
+                        rotationX: 0,
+                        rotationY: 0,
+                        duration: 1
+                    });
+                }
+            });
+            
+            // 技能条动画
+            const skillBars = document.querySelectorAll('.skill-progress');
+            
+            skillBars.forEach(bar => {
+                ScrollTrigger.create({
+                    trigger: bar,
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    onEnter: () => {
+                        const width = bar.getAttribute('data-width');
+                        gsap.to(bar, {
+                            width: `${width}%`,
+                            duration: 1.5,
+                            ease: "power2.out"
+                        });
+                    },
+                    once: true
+                });
+            });
+            
+            // 联系区域打字机效果
+            const contactTitle = document.getElementById('contactTitle');
+            
+            ScrollTrigger.create({
+                trigger: ".contact",
+                start: "top 70%",
+                onEnter: () => {
+                    contactTitle.classList.add('animate');
+                },
+                once: true
+            });
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            // 创建闪烁背景
+            createTwinklingBackground();
+            
+            // 创建蜂窝六边形加载动画
+            createHexagonAnimation();
+            
+            // 初始化磁吸小球效果
+            magnetic.init();
+            
+            // 绘制时钟
+            drawClock();
+            
+            // 初始化滚动动画
+            initScrollAnimations();
+            
+            // 隐藏加载动画
+            setTimeout(() => {
+                loading.out();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
